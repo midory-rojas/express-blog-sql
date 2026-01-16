@@ -43,6 +43,10 @@ function show(req, res) {
     });
 }
 
+function showWithDetails(req, res) {
+    
+}
+
 // Creare un nuovo tipo di post (cane) - STORE
 function store(req, res) {
     //Dati--body
