@@ -128,28 +128,17 @@ function modify(req, res) {
 
 // Cancellare un post di cane esistente - DESTROY
 function destroy(req, res) {
-    const id = parseInt(req.params.id);
-
-    //Implemntazione della logica 
-    //1. Trovare index del post di cani con findIndex
-    const caneIndex = caniArray.findIndex((cane) => cane.id === id);
-    //console.log(caneIndex);
-
-    //Condizione
-    if (caneIndex === -1) {
-        res.status(404); //Status 404 not found
-        res.json({
-            error: "not found",
-            message: "Cane non trovato",
-        });
-    } else {
-        //2. Cancello il post di cane con lo splice
-        //partendo dal indice 1, cancello un'elemento (1)
-        //dopo faccio il test con index per vedere si è stato cancelato il post
-
-        caniArray.splice(caneIndex, 1)
-        res.sendStatus(204) //Status 204 non c'è nessun contenuto
-    }
+    const id = req.params.id;
+    const query = "DELETE FROM `posts` WHERE id = ?";
+    connection.query(query, [id], (err) => {
+        if (err) {
+            res.status(500);
+            return res.json({
+                message: "Internal server error",
+            });
+        }
+        res.sendStatus(204) //Status 204 non c'è nessun contenuto, ed è andato tutto bene
+    });
 }
 
 
