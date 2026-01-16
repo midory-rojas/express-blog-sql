@@ -8,10 +8,10 @@ function index(req, res) {
     const query = "SELECT * FROM `posts`";
 
     connection.query(query, (err, result) => {
-        if(err) {
+        if (err) {
             res.status(500);
             return res.json({
-                message: "Internal server error"
+                message: "Internal server error",
             });
         }
         res.json({
@@ -22,19 +22,25 @@ function index(req, res) {
 
 // Dettagli di un singolo post (cane) - SHOW
 function show(req, res) {
-    const id = parseInt(req.params.id);
-    //uso find 
-    const cane = caniArray.find((cane) => cane.id === id);
-    //uso la condizione
-    if (cane !== undefined) {
-        res.json(cane);
-    } else {
-        res.status(404); //Status 404
-        res.json({
-            error: "Not found",
-            message: "Cane non trovato",
-        });
-    }
+    const id = req.params.id;
+    const query = "SELECT * FROM `posts` WHERE `posts`. `id` = ?";
+    connection.query(query, [id], (err, result) => {
+        if (err) {
+            res.status(500);
+            return res.json({
+                message: "Internal server error",
+            });
+        }
+        if (result.length === 0) {
+            res.status(404)
+            res.json({
+                message: "Post non trovato"
+            });
+        } else {
+            const post = result[0];
+            res.json(post);
+        }
+    });
 }
 
 // Creare un nuovo tipo di post (cane) - STORE
@@ -82,7 +88,7 @@ function update(req, res) {
     //Faccio la condizione per controllare si il parametro esiste nell'array
     // di post, se non esiste stampo status 404 con messagio di errore, not found
 
-      if (cane === undefined) {
+    if (cane === undefined) {
         res.status(404);
         return res.json({
             error: "Not found",
@@ -95,13 +101,13 @@ function update(req, res) {
     const dati = req.body;
     console.log(dati);
 
-// Controllare la correttezza di dati nell'update, 
-// inviando nel caso errore 400
-// Condizione quando il client non inserisce il titolo o il dato è vuoto
+    // Controllare la correttezza di dati nell'update, 
+    // inviando nel caso errore 400
+    // Condizione quando il client non inserisce il titolo o il dato è vuoto
     if (dati.titolo === undefined || dati.titolo.length === 0) {
         res.status(400);
-        return res.json ({
-            error:"Error del client",
+        return res.json({
+            error: "Error del client",
             message: "Il campo titolo è obbligatorio e non può essere vuoto",
         });
     }
