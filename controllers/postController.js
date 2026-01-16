@@ -1,13 +1,23 @@
 //imporoto l'array di cani della cartella data
 import caniArray from "../data/cani.js";
+//Importo connection di data
+import connection from "../data/db.js";
 
 // Lettura di tutti i post dei cani - INDEX
 function index(req, res) {
-    const risposta = {
-        count: caniArray.length,
-        results: caniArray,
-    };
-    res.json(risposta);
+    const query = "SELECT * FROM `posts`";
+
+    connection.query(query, (err, result) => {
+        if(err) {
+            res.status(500);
+            return res.json({
+                message: "Internal server error"
+            });
+        }
+        res.json({
+            results: result,
+        })
+    })
 }
 
 // Dettagli di un singolo post (cane) - SHOW
